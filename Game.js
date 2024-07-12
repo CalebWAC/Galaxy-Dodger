@@ -11,6 +11,26 @@ const asteroidL = "l";
 const asteroidR = "r";
 const asteroidD = "d";
 
+const cannonU = "q"
+const cannonD = "w"
+const cannonL = "e"
+const cannonR = "t"
+
+const engineU = "f"
+const engineD = "g"
+const engineL = "h"
+const engineR = "j"
+
+const engineMiniU = "z"
+const engineMiniD = "x"
+const engineMiniL = "c"
+const engineMiniR = "v"
+
+const cannonBooster = "0"
+const engineBooster = "1"
+
+const selector = "s"
+
 const noise = tune `
 329.6703296703297,
 164.83516483516485: F4~164.83516483516485,
@@ -145,10 +165,304 @@ setLegend(
 ....CCCCCC1CCC..
 .....CCCCCCCCC..
 .......CCCCCC...
-................`]
+................`],
+  [ cannonU, bitmap`
+.......66.......
+.......66.......
+.......66.......
+.......66.......
+.......66.......
+.....HHHHHH.....
+......4444......
+....HHHHHHHH....
+.....444444.....
+.....444444.....
+...HHHHHHHHHH...
+..H4HHHHHHHH4H..
+..HH4HHHHHH4HH..
+..HHH444444HHH..
+HHHHHHHHHHHHHHHH
+HHHHHHHHHHHHHHHH`],
+  [ cannonD, bitmap `
+HHHHHHHHHHHHHHHH
+HHHHHHHHHHHHHHHH
+..HHH444444HHH..
+..HH4HHHHHH4HH..
+..H4HHHHHHHH4H..
+...HHHHHHHHHH...
+.....444444.....
+.....444444.....
+....HHHHHHHH....
+......4444......
+.....HHHHHH.....
+.......66.......
+.......66.......
+.......66.......
+.......66.......
+.......66.......`],
+  [ cannonL, bitmap `
+..............HH
+..............HH
+...........HHHHH
+..........H4HHHH
+.......H..HH4HHH
+.....H.H44HHH4HH
+.....H4H44HHH4HH
+66666H4H44HHH4HH
+66666H4H44HHH4HH
+.....H4H44HHH4HH
+.....H.H44HHH4HH
+.......H..HH4HHH
+..........H4HHHH
+...........HHHHH
+..............HH
+..............HH`],
+  [ cannonR, bitmap `
+HH..............
+HH..............
+HHHHH...........
+HHHH4H..........
+HHH4HH..H.......
+HH4HHH44H.H.....
+HH4HHH44H4H.....
+HH4HHH44H4H66666
+HH4HHH44H4H66666
+HH4HHH44H4H.....
+HH4HHH44H.H.....
+HHH4HH..H.......
+HHHH4H..........
+HHHHH...........
+HH..............
+HH..............`],
+  [ engineU, bitmap`
+CCCCCCCCCCCCCCCC
+.CCFCCCCCCCCFCC.
+..CFFCCCCCCFFC..
+..CCFFCCCCFFCC..
+...CCFCCCCFCC...
+...CCFCCCCFCC...
+....CFCCCCFC....
+....CFCCCCFC....
+....CFCCCCFC....
+....CCFCCFCC....
+...CCCCFFCCCC...
+...CCCFCCFCCC...
+..CCCFCCCCFCCC..
+..CFFFFFFFFFFC..
+..CCCCCCCCCCCC..
+....93939693....`],
+  [ engineD, bitmap `
+....39693939....
+..CCCCCCCCCCCC..
+..CFFFFFFFFFFC..
+..CCCFCCCCFCCC..
+...CCCFCCFCCC...
+...CCCCFFCCCC...
+....CCFCCFCC....
+....CFCCCCFC....
+....CFCCCCFC....
+....CFCCCCFC....
+...CCFCCCCFCC...
+...CCFCCCCFCC...
+..CCFFCCCCFFCC..
+..CFFCCCCCCFFC..
+.CCFCCCCCCCCFCC.
+CCCCCCCCCCCCCCCC`],
+  [ engineL, bitmap `
+C...............
+CC..............
+CCCC........CCC.
+CFFCCC....CCCFC.
+CCFFCCCCCCCCCFC3
+CCCFFFFFFCCCFFC9
+CCCCCCCCCFCFCFC6
+CCCCCCCCCCFCCFC9
+CCCCCCCCCCFCCFC3
+CCCCCCCCCFCFCFC9
+CCCFFFFFFCCCFFC3
+CCFFCCCCCCCCCFC9
+CFFCCC....CCCFC.
+CCCC........CCC.
+CC..............
+C...............`],
+  [ engineR, bitmap `
+...............C
+..............CC
+.CCC........CCCC
+.CFCCC....CCCFFC
+9CFCCCCCCCCCFFCC
+3CFFCCCFFFFFFCCC
+9CFCFCFCCCCCCCCC
+3CFCCFCCCCCCCCCC
+9CFCCFCCCCCCCCCC
+6CFCFCFCCCCCCCCC
+9CFFCCCFFFFFFCCC
+3CFCCCCCCCCCFFCC
+.CFCCC....CCCFFC
+.CCC........CCCC
+..............CC
+...............C`],
+  [ engineMiniU, bitmap`
+CCCCCCCCCCCCCCCC
+.CCFCCCCCCCCFCC.
+..CFFCCCCCCFFC..
+..CCFFCCCCFFCC..
+...CCFCCCCFCC1..
+...CCFCCCCFCC11.
+....CFCCCCFC1111
+....CFCCCCFC1119
+....CFCCCCFC1119
+....CCFCCFCC1111
+...CCCCFFCCCC11.
+...CCCFCCFCCC1..
+..CCCFCCCCFCCC..
+..CFFFFFFFFFFC..
+..CCCCCCCCCCCC..
+....93939693....`],
+  [ engineMiniD, bitmap `
+....39693939....
+..CCCCCCCCCCCC..
+..CFFFFFFFFFFC..
+..CCCFCCCCFCCC..
+..1CCCFCCFCCC...
+.11CCCCFFCCCC...
+1111CCFCCFCC....
+9111CFCCCCFC....
+9111CFCCCCFC....
+1111CFCCCCFC....
+.11CCFCCCCFCC...
+..1CCFCCCCFCC...
+..CCFFCCCCFFCC..
+..CFFCCCCCCFFC..
+.CCFCCCCCCCCFCC.
+CCCCCCCCCCCCCCCC`],
+  [ engineMiniL, bitmap `
+C.....1991......
+CC...111111.....
+CCCC11111111CCC.
+CFFCCC1111CCCFC.
+CCFFCCCCCCCCCFC3
+CCCFFFFFFCCCFFC9
+CCCCCCCCCFCFCFC6
+CCCCCCCCCCFCCFC9
+CCCCCCCCCCFCCFC3
+CCCCCCCCCFCFCFC9
+CCCFFFFFFCCCFFC3
+CCFFCCCCCCCCCFC9
+CFFCCC....CCCFC.
+CCCC........CCC.
+CC..............
+C...............`],
+  [ engineMiniR, bitmap `
+...............C
+..............CC
+.CCC........CCCC
+.CFCCC....CCCFFC
+9CFCCCCCCCCCFFCC
+3CFFCCCFFFFFFCCC
+9CFCFCFCCCCCCCCC
+3CFCCFCCCCCCCCCC
+9CFCCFCCCCCCCCCC
+6CFCFCFCCCCCCCCC
+9CFFCCCFFFFFFCCC
+3CFCCCCCCCCCFFCC
+.CFCCC1111CCCFFC
+.CCC11111111CCCC
+.....111111...CC
+......1991.....C`],
+  [ cannonBooster, bitmap`
+...HHHHHHHHHH...
+..HHHHHHHHHHHH..
+.HHHHHHHHHHHHHH.
+HHHHHHHHHHHHHHHH
+HHHHHHHHHHHHHHHH
+HHHHHH8888HHHHHH
+HHHHHH8888HHHHHH
+HHHHHH8888HHHHHH
+HHHHHH8888HHHHHH
+HHHHHH8888HHHHHH
+HHHHHHHHHHHHHHHH
+HHHHHHHHHHHHHHHH
+HHHHHHHHHHHHHHHH
+.HHHHHHHHHHHHHH.
+..HHHHHHHHHHHH..
+...HHHHHHHHHH...`],
+  [ engineBooster, bitmap`
+...CCCCCCCCCC...
+..CCCCCCCCCCCC..
+.CCCCCCCCCCCCCC.
+CCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCC
+CCCCCCFFFFCCCCCC
+CCCCCCFFFFCCCCCC
+CCCCCCFFFFCCCCCC
+CCCCCCFFFFCCCCCC
+CCCCCCFFFFCCCCCC
+CCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCC
+.CCCCCCCCCCCCCC.
+..CCCCCCCCCCCC..
+...CCCCCCCCCC...`],
+  [ selector, bitmap `
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333
+3333333333333333`]
 )
 
-const level = map `
+let level = 0
+const levels = [
+  map `
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................
+...............................`,
+  map`
+...........
+...........
+...........
+.s.........
+...........
+...........
+...........
+...........
+...........
+...........`,
+  map `
 ................................
 ................................
 ................................
@@ -175,45 +489,110 @@ const level = map `
 ................................
 ................................
 ................................`
+]
 
 // set the map displayed to the current level
-// const currentLevel = levels[level];
-setMap(level);
+setMap(levels[level]);
 
 let gameOver = false
 
+let first;
+let second;
+let third;
+let fourth;
+
+function initialize() {
+  addText("Build your ship", {x: 2, y: 1, color: color `5`})
+  
+  for (let y = 3; y < 7; y += 2) {
+    for (let x = 1; x < 11; x += 2) {
+      addSprite(x, y, getType());
+    }
+  }
+}
+
 // inputs for player movement control
 onInput("w", () => {
-  getFirst(player).y -= 1;
+  if (level == 1) {
+    if (getFirst(selector).y = 5) getFirst(selector).y -= 2;
+  }
+  else if (level == 2) { getFirst(player).y -= 1; }
 });
 
 onInput("a", () => {
-  getFirst(player).x -= 1;
+  if (level == 1) {
+    if (getFirst(selector).x != 1) getFirst(selector).x -= 2;
+  }
+  else if (level == 2) { getFirst(player).x -= 1; }
 });
 
 onInput("s", () => {
-  getFirst(player).y += 1; // positive y is downwards
+  if (level == 1) {
+    if (getFirst(selector).y = 3) getFirst(selector).y += 2;
+  }
+  else if (level == 2) { getFirst(player).y += 1; }
 });
 
 onInput("d", () => {
-  getFirst(player).x += 1;
+  if (level == 1) {
+    if (getFirst(selector).x != 10) getFirst(selector).x += 2;
+  }
+  else if (level == 2) { getFirst(player).x += 1; }
 });
 
-// input to reset level
-onInput("j", () => {
-  const currentLevel = levels[level]; // get the original map of the level
+onInput("k", () => { if (level == 0) { level++; setMap(levels[level]); clearText(); initialize(); } })
 
-  // make sure the level exists before we load it
-  if (currentLevel !== undefined) {
-    clearText("");
-    setMap(currentLevel);
+onInput("l", () => {
+  if (level == 1) { 
+    let select = getFirst(selector)
+    if (first == undefined) {
+      addSprite(5, 7, getTile(select.x, select.y)[0].type)
+      first = getTile(select.x, select.y)[0].type
+    } else if (second == undefined) {
+      addSprite(6, 7, getTile(select.x, select.y)[0].type)
+      second = getTile(select.x, select.y)[0].type
+    } else if (third == undefined) {
+      addSprite(5, 8, getTile(select.x, select.y)[0].type)
+      third = getTile(select.x, select.y)[0].type
+    } else if (fourth == undefined) {
+      addSprite(6, 8, getTile(select.x, select.y)[0].type)
+      fourth = getTile(select.x, select.y)[0].type
+    }
+    
+    getTile(select.x, select.y)[0].remove()
   }
 });
 
 // these get run after every input
 afterInput(() => {
+  if (level == 1 && first != undefined && second != undefined && third != undefined && fourth != undefined) {
+    level++;
+    clearText();
+    setMap(levels[level]);
+    gameLoop();
+    genAsteroids();
+  }
 });
 
+
+function getType() {
+  switch (Math.floor(Math.random() * 14)) {
+    case 0: return cannonU; break;
+    case 1: return cannonD; break;
+    case 2: return cannonL; break;
+    case 3: return cannonR; break;
+    case 4: return engineU; break;
+    case 5: return engineD; break;
+    case 6: return engineL; break;
+    case 7: return engineR; break;
+    case 8: return engineMiniU; break;
+    case 9: return engineMiniU; break;
+    case 10: return engineMiniU; break;
+    case 11: return engineMiniU; break;
+    case 12: return cannonBooster; break;
+    case 13: return engineBooster; break;
+  }
+}
 
 function moveAsteroids() {
   getAll(asteroidU).forEach(ast => { 
@@ -267,5 +646,8 @@ function genAsteroids() {
   }
 }
 
-gameLoop()
-genAsteroids()
+function start() {
+  addText("Galaxy Dodger", { x: 3, y: 3, color: color`5`})
+}
+
+start()

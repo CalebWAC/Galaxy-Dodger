@@ -29,6 +29,11 @@ const engineMiniR = "v"
 const cannonBooster = "0"
 const engineBooster = "1"
 
+const laserU = "2"
+const laserL = "3"
+const laserR = "4"
+const laserD = "5"
+
 const selector = "s"
 
 const noise = tune `
@@ -420,7 +425,75 @@ CCCCCCCCCCCCCCCC
 3333333333333333
 3333333333333333
 3333333333333333
-3333333333333333`]
+3333333333333333`],
+  [ laserL, bitmap `
+................
+................
+................
+................
+................
+................
+................
+3333333333333333
+3333333333333333
+................
+................
+................
+................
+................
+................
+................`],
+  [ laserU, bitmap `
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......`],
+  [ laserR, bitmap `
+................
+................
+................
+................
+................
+................
+................
+3333333333333333
+3333333333333333
+................
+................
+................
+................
+................
+................
+................`],
+  [ laserD, bitmap `
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......
+.......33.......`]
 )
 
 let level = 0
@@ -478,6 +551,32 @@ const levels = [
 ................................
 ................................
 ................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................`,
+  map `................................
+................................
+................................
+................................
+..u.............................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
+................................
 .............p..................
 ................................
 ................................
@@ -494,12 +593,15 @@ const levels = [
 // set the map displayed to the current level
 setMap(levels[level]);
 
+let score = 0
 let gameOver = false
 
 let first;
 let second;
 let third;
 let fourth;
+let components;
+let laserQueue = []
 
 function initialize() {
   addText("Build your ship", {x: 2, y: 1, color: color `5`})
@@ -511,64 +613,95 @@ function initialize() {
   }
 }
 
+function spawnSpaceship() {
+  addSprite(15, 15, first)
+  addSprite(16, 15, second)
+  addSprite(15, 16, third)
+  addSprite(16, 16, fourth)
+}
+
 // inputs for player movement control
 onInput("w", () => {
   if (level == 1) {
     if (getFirst(selector).y = 5) getFirst(selector).y -= 2;
   }
-  else if (level == 2) { getFirst(player).y -= 1; }
+  else if (level == 2 && !gameOver && (components.includes(engineU) || components.includes(engineMiniU))) {
+    components.forEach(c => { getFirst(c).y -= 1 });
+  }
+  else if (level == 3 && !gameOver) { getFirst(player).y -= 1; }
 });
 
 onInput("a", () => {
   if (level == 1) {
     if (getFirst(selector).x != 1) getFirst(selector).x -= 2;
+  } else if (level == 2 && !gameOver && (components.includes(engineL) || components.includes(engineMiniL))) {
+    components.forEach(c => { getFirst(c).x -= 1 });
   }
-  else if (level == 2) { getFirst(player).x -= 1; }
+  else if (level == 3 && !gameOver) { getFirst(player).x -= 1; }
 });
 
 onInput("s", () => {
   if (level == 1) {
     if (getFirst(selector).y = 3) getFirst(selector).y += 2;
+  } else if (level == 2 && !gameOver && (components.includes(engineD) || components.includes(engineMiniD))) {
+    components.forEach(c => { getFirst(c).y += 1 });
   }
-  else if (level == 2) { getFirst(player).y += 1; }
+  else if (level == 3 && !gameOver) { getFirst(player).y += 1; }
 });
 
 onInput("d", () => {
   if (level == 1) {
     if (getFirst(selector).x != 10) getFirst(selector).x += 2;
+  } else if (level == 2 && !gameOver && (components.includes(engineR) || components.includes(engineMiniR))) {
+    components.forEach(c => { getFirst(c).x += 1 });
   }
-  else if (level == 2) { getFirst(player).x += 1; }
+  else if (level == 3 && !gameOver) { getFirst(player).x += 1; }
 });
 
-onInput("k", () => { if (level == 0) { level++; setMap(levels[level]); clearText(); initialize(); } })
+onInput("k", () => { 
+  if (level == 0) { level++; setMap(levels[level]); clearText(); initialize(); } 
+  else if (level == 2) {
+    if (components.includes(cannonU)) { laserQueue.push(laserU) }
+    if (components.includes(cannonD)) { laserQueue.push(laserD) }
+    if (components.includes(cannonL)) { laserQueue.push(laserL) }
+    if (components.includes(cannonR)) { laserQueue.push(laserR) }
+  }
+})
+
+onInput("j", () => { if (level == 0) { level = 3; setMap(levels[level]); clearText(); gameLoop(); genAsteroids(); }})
 
 onInput("l", () => {
   if (level == 1) { 
     let select = getFirst(selector)
+    let type = getTile(select.x, select.y)[0].type
+    getAll(type).forEach(t => { t.remove() })
+    
     if (first == undefined) {
-      addSprite(5, 7, getTile(select.x, select.y)[0].type)
-      first = getTile(select.x, select.y)[0].type
+      addSprite(5, 7, type)
+      first = type
     } else if (second == undefined) {
-      addSprite(6, 7, getTile(select.x, select.y)[0].type)
-      second = getTile(select.x, select.y)[0].type
+      addSprite(6, 7, type)
+      second = type
     } else if (third == undefined) {
-      addSprite(5, 8, getTile(select.x, select.y)[0].type)
-      third = getTile(select.x, select.y)[0].type
+      addSprite(5, 8, type)
+      third = type
     } else if (fourth == undefined) {
-      addSprite(6, 8, getTile(select.x, select.y)[0].type)
-      fourth = getTile(select.x, select.y)[0].type
+      addSprite(6, 8, type)
+      fourth = type
     }
     
-    getTile(select.x, select.y)[0].remove()
+    
   }
 });
 
 // these get run after every input
 afterInput(() => {
   if (level == 1 && first != undefined && second != undefined && third != undefined && fourth != undefined) {
+    components = [first, second, third, fourth]
     level++;
     clearText();
     setMap(levels[level]);
+    spawnSpaceship();
     gameLoop();
     genAsteroids();
   }
@@ -596,38 +729,90 @@ function getType() {
 
 function moveAsteroids() {
   getAll(asteroidU).forEach(ast => { 
-    if (ast.y == height() - 1) { ast.remove(); }
+    if (ast.y == height() - 1) { score += 5; ast.remove(); }
     ast.y += 1; 
   });
 
   getAll(asteroidD).forEach(ast => { 
-    if (ast.y == 0) { ast.remove(); }
+    if (ast.y == 0) { score += 5; ast.remove(); }
     ast.y -= 1; 
   });
 
   getAll(asteroidL).forEach(ast => { 
-    if (ast.x == width() - 1) { ast.remove(); }
+    if (ast.x == width() - 1) { score += 5; ast.remove(); }
     ast.x += 1; 
   });
 
   getAll(asteroidR).forEach(ast => { 
-    if (ast.x == 0) { ast.remove(); }
+    if (ast.x == 0) { score += 5; ast.remove(); }
     ast.x -= 1; 
   });
 }
 
+function endGame() {
+  gameOver = true;
+  backmusic.end()
+  playTune(dundundun)
+  addText("Game Over", { x: 10, y: 10, color: color`3` })
+}
+
+function compare(ast) {
+  return (ast.x == getFirst(first).x && ast.y == getFirst(first).y) ||
+         (ast.x == getFirst(second).x && ast.y == getFirst(second).y) ||
+         (ast.x == getFirst(third).x && ast.y == getFirst(third).y) ||
+         (ast.x == getFirst(fourth).x && ast.y == getFirst(fourth).y);
+}
+
 function checkForCollision() {
-  let p = getFirst(player)
-  getAll(asteroidU).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { gameOver = true; backmusic.end(); playTune(dundundun); addText("Game Over", { x: 10, y: 10, color: color`3` })}})
-  getAll(asteroidD).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { gameOver = true; backmusic.end(); playTune(dundundun); addText("Game Over", { x: 10, y: 10, color: color`3` })}})
-  getAll(asteroidL).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { gameOver = true; backmusic.end(); playTune(dundundun); addText("Game Over", { x: 10, y: 10, color: color`3` })}})
-  getAll(asteroidR).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { gameOver = true; backmusic.end(); playTune(dundundun); addText("Game Over", { x: 10, y: 10, color: color`3` })}})
+  if (level == 2) {
+    getAll(asteroidU).forEach(ast => { if (compare(ast)) { endGame() } })
+    getAll(asteroidD).forEach(ast => { if (compare(ast)) { endGame() }})
+    getAll(asteroidL).forEach(ast => { if (compare(ast)) { endGame() }})
+    getAll(asteroidR).forEach(ast => { if (compare(ast)) { endGame() }})
+  } else if (level == 3) {
+    let p = getFirst(player)
+    getAll(asteroidU).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { endGame() } })
+    getAll(asteroidD).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { endGame() }})
+    getAll(asteroidL).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { endGame() }})
+    getAll(asteroidR).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { endGame() }})
+  }
+}
+
+function genLasers() {
+  for (laser in laserQueue) {
+    if (laser = laserU) { addSprite(getFirst(cannonU).x, getFirst(cannonU).y, laser) }
+  }
+}
+
+function moveLasers() {
+  getAll(laserU).forEach(l => { 
+    if (l.y == 0) { l.remove(); }
+    l.y -= 1; 
+  });
+
+  getAll(laserD).forEach(l => { 
+    if (l.y == height() - 1) { l.remove(); }
+    l.y += 1; 
+  });
+
+  getAll(laserL).forEach(l => { 
+    if (l.x == width() - 1) { l.remove(); }
+    l.x += 1; 
+  });
+
+  getAll(laserR).forEach(l => { 
+    if (l.x == 0) { l.remove(); }
+    l.x -= 1; 
+  });
 }
 
 function gameLoop() {
   if (!gameOver) {
+    genLasers()
+    moveLasers()
     moveAsteroids()
     checkForCollision()
+    addText(`Score: ${score}`, { x: 0, y: 0, color: color `L`})
     
     setTimeout(gameLoop, 100)
   }
@@ -648,6 +833,8 @@ function genAsteroids() {
 
 function start() {
   addText("Galaxy Dodger", { x: 3, y: 3, color: color`5`})
+  addText("Press k to start", { x: 2, y: 10, color: color`4`})
+  addText("j for classic mode", { x: 1, y: 12, color: color`D`})
 }
 
 start()

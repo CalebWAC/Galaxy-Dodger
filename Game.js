@@ -540,7 +540,7 @@ const levels = [
 ................................
 ................................
 ................................
-..u.............................
+...............d................
 ................................
 ................................
 ................................
@@ -623,7 +623,7 @@ function spawnSpaceship() {
 // inputs for player movement control
 onInput("w", () => {
   if (level == 1) {
-    if (getFirst(selector).y = 5) getFirst(selector).y -= 2;
+    if (getFirst(selector).y == 5) getFirst(selector).y -= 2;
   }
   else if (level == 2 && !gameOver && (components.includes(engineU) || components.includes(engineMiniU))) {
     components.forEach(c => { getFirst(c).y -= 1 });
@@ -642,7 +642,7 @@ onInput("a", () => {
 
 onInput("s", () => {
   if (level == 1) {
-    if (getFirst(selector).y = 3) getFirst(selector).y += 2;
+    if (getFirst(selector).y == 3) getFirst(selector).y += 2;
   } else if (level == 2 && !gameOver && (components.includes(engineD) || components.includes(engineMiniD))) {
     components.forEach(c => { getFirst(c).y += 1 });
   }
@@ -703,7 +703,7 @@ afterInput(() => {
     setMap(levels[level]);
     spawnSpaceship();
     gameLoop();
-    genAsteroids();
+    // genAsteroids();
   }
 });
 
@@ -719,9 +719,9 @@ function getType() {
     case 6: return engineL; break;
     case 7: return engineR; break;
     case 8: return engineMiniU; break;
-    case 9: return engineMiniU; break;
-    case 10: return engineMiniU; break;
-    case 11: return engineMiniU; break;
+    case 9: return engineMiniD; break;
+    case 10: return engineMiniL; break;
+    case 11: return engineMiniR; break;
     case 12: return cannonBooster; break;
     case 13: return engineBooster; break;
   }
@@ -729,13 +729,13 @@ function getType() {
 
 function moveAsteroids() {
   getAll(asteroidU).forEach(ast => { 
-    if (ast.y == height() - 1) { score += 5; ast.remove(); }
-    ast.y += 1; 
+    if (ast.y == 0) { score += 5; ast.remove(); }
+    ast.y -= 1; 
   });
 
   getAll(asteroidD).forEach(ast => { 
-    if (ast.y == 0) { score += 5; ast.remove(); }
-    ast.y -= 1; 
+    if (ast.y == height() - 1) { score += 5; ast.remove(); }
+    ast.y += 1; 
   });
 
   getAll(asteroidL).forEach(ast => { 
@@ -756,19 +756,34 @@ function endGame() {
   addText("Game Over", { x: 10, y: 10, color: color`3` })
 }
 
-function compare(ast) {
+function compareShip(ast) {
   return (ast.x == getFirst(first).x && ast.y == getFirst(first).y) ||
          (ast.x == getFirst(second).x && ast.y == getFirst(second).y) ||
          (ast.x == getFirst(third).x && ast.y == getFirst(third).y) ||
          (ast.x == getFirst(fourth).x && ast.y == getFirst(fourth).y);
 }
 
+function compareLaser(ast) {
+  getAll(laserU).forEach(laser => { 
+    if (ast.type == asteroidD) { console.log(laser.y); console.log(ast.y); }
+                                   if (ast.x == laser.x && ast.y == laser.y) { return true; }});
+  getAll(laserD).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { return true; }});
+  getAll(laserL).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { return true; }});
+  getAll(laserR).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { return true; }});
+  return false;
+}
+
 function checkForCollision() {
   if (level == 2) {
-    getAll(asteroidU).forEach(ast => { if (compare(ast)) { endGame() } })
-    getAll(asteroidD).forEach(ast => { if (compare(ast)) { endGame() }})
-    getAll(asteroidL).forEach(ast => { if (compare(ast)) { endGame() }})
-    getAll(asteroidR).forEach(ast => { if (compare(ast)) { endGame() }})
+    getAll(asteroidU).forEach(ast => { if (compareShip(ast)) { endGame() } })
+    getAll(asteroidD).forEach(ast => { if (compareShip(ast)) { endGame() }})
+    getAll(asteroidL).forEach(ast => { if (compareShip(ast)) { endGame() }})
+    getAll(asteroidR).forEach(ast => { if (compareShip(ast)) { endGame() }})
+
+    getAll(asteroidU).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 } })
+    getAll(asteroidD).forEach(ast => { if (compareLaser(ast)) { console.log("Yay!"); ast.remove(); score += 25 }})
+    getAll(asteroidL).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
+    getAll(asteroidR).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
   } else if (level == 3) {
     let p = getFirst(player)
     getAll(asteroidU).forEach(ast => { if (ast.x == p.x && ast.y == p.y) { endGame() } })
@@ -779,9 +794,14 @@ function checkForCollision() {
 }
 
 function genLasers() {
-  for (laser in laserQueue) {
-    if (laser = laserU) { addSprite(getFirst(cannonU).x, getFirst(cannonU).y, laser) }
-  }
+  laserQueue.forEach(laser => {
+    if (laser == laserU && getFirst(cannonU)) { addSprite(getFirst(cannonU).x, getFirst(cannonU).y, laser) }
+    if (laser == laserD && getFirst(cannonD)) { addSprite(getFirst(cannonD).x, getFirst(cannonD).y, laser) }
+    if (laser == laserL && getFirst(cannonL)) { addSprite(getFirst(cannonL).x, getFirst(cannonL).y, laser) }
+    if (laser == laserR && getFirst(cannonR)) { addSprite(getFirst(cannonR).x, getFirst(cannonR).y, laser) }
+  })
+
+  laserQueue = []
 }
 
 function moveLasers() {
@@ -796,13 +816,13 @@ function moveLasers() {
   });
 
   getAll(laserL).forEach(l => { 
-    if (l.x == width() - 1) { l.remove(); }
-    l.x += 1; 
+    if (l.x == 0) { l.remove(); }
+    l.x -= 1; 
   });
 
   getAll(laserR).forEach(l => { 
-    if (l.x == 0) { l.remove(); }
-    l.x -= 1; 
+    if (l.x == width() - 1) { l.remove(); }
+    l.x += 1; 
   });
 }
 
@@ -810,6 +830,7 @@ function gameLoop() {
   if (!gameOver) {
     genLasers()
     moveLasers()
+    checkForCollision()
     moveAsteroids()
     checkForCollision()
     addText(`Score: ${score}`, { x: 0, y: 0, color: color `L`})

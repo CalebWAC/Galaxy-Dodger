@@ -36,6 +36,8 @@ const laserD = "5"
 
 const selector = "s"
 
+const background = "b"
+
 const noise = tune `
 329.6703296703297,
 164.83516483516485: F4~164.83516483516485,
@@ -493,7 +495,24 @@ CCCCCCCCCCCCCCCC
 .......33.......
 .......33.......
 .......33.......
-.......33.......`]
+.......33.......`],
+  [ background, bitmap`
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000`]
 )
 
 let level = 0
@@ -536,58 +555,59 @@ const levels = [
 ...........
 ...........`,
   map `
-................................
-................................
-................................
-................................
-...............d................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................`,
-  map `................................
-................................
-................................
-................................
-..u.............................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-.............p..................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................
-................................`
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`,
+  map `
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`
 ]
 
 // set the map displayed to the current level
@@ -659,16 +679,63 @@ onInput("d", () => {
 });
 
 onInput("k", () => { 
-  if (level == 0) { level++; setMap(levels[level]); clearText(); initialize(); } 
-  else if (level == 2) {
-    if (components.includes(cannonU)) { laserQueue.push(laserU) }
-    if (components.includes(cannonD)) { laserQueue.push(laserD) }
-    if (components.includes(cannonL)) { laserQueue.push(laserL) }
-    if (components.includes(cannonR)) { laserQueue.push(laserR) }
+  if (level == 0) { level = 1; setMap(levels[level]); clearText(); initialize(); } 
+  else if (level == 2 || level == 3) {
+    if (!gameOver) {
+      if (components.includes(cannonU) && getAll(laserU).length < 3) { laserQueue.push(laserU) }
+      if (components.includes(cannonD) && getAll(laserD).length < 3) { laserQueue.push(laserD) }
+      if (components.includes(cannonL) && getAll(laserL).length < 3) { laserQueue.push(laserL) }
+      if (components.includes(cannonR) && getAll(laserR).length < 3) { laserQueue.push(laserR) }
+    } else { 
+      level = 0; 
+      setMap(levels[level]); 
+      clearText(); 
+      playTune(noise); 
+      gameOver = false; 
+      first = undefined; second = undefined; third = undefined; fourth = undefined; components = [];
+      start(); }
   }
 })
 
-onInput("j", () => { if (level == 0) { level = 3; setMap(levels[level]); clearText(); gameLoop(); genAsteroids(); }})
+function swap(type) {
+  switch (type) {
+    case cannonU: return cannonR; break;
+    case cannonD: return cannonL; break;
+    case cannonL: return cannonU; break;
+    case cannonR: return cannonD; break;
+    case engineU: return engineR; break;
+    case engineD: return engineL; break;
+    case engineL: return engineU; break;
+    case engineR: return engineD; break;
+    case engineMiniU: return engineMiniR; break;
+    case engineMiniU: return engineMiniL; break;
+    case engineMiniU: return engineMiniU; break;
+    case engineMiniU: return engineMiniD; break;
+    default: return type; break;
+  }
+}
+
+onInput("j", () => { 
+  if (level == 0) { level = 3; setMap(levels[level]); clearText(); addSprite(13, 15, player); gameLoop(); genAsteroids(); }
+  else if (level == 2 && !gameOver && (components.includes(engineMiniU) || components.includes(engineMiniD) || components.includes(engineMiniL) || components.includes(engineMiniR))) {
+    newComponents = [swap(third), swap(first), swap(fourth), swap(second)]
+    addSprite(getFirst(first).x, getFirst(first).y, newComponents[0])
+    addSprite(getFirst(second).x, getFirst(second).y, newComponents[1])
+    addSprite(getFirst(third).x, getFirst(third).y, newComponents[2])
+    addSprite(getFirst(fourth).x, getFirst(fourth).y, newComponents[3])
+    
+    getFirst(first).remove();
+    getFirst(second).remove();
+    getFirst(third).remove();
+    getFirst(fourth).remove();
+    
+    components = newComponents
+    first = components[0]
+    second = components[1]
+    third = components[2]
+    fourth = components[3]
+  }
+})
 
 onInput("l", () => {
   if (level == 1) { 
@@ -689,10 +756,10 @@ onInput("l", () => {
       addSprite(6, 8, type)
       fourth = type
     }
-    
-    
   }
 });
+
+onInput("i", () => {})
 
 // these get run after every input
 afterInput(() => {
@@ -703,7 +770,7 @@ afterInput(() => {
     setMap(levels[level]);
     spawnSpaceship();
     gameLoop();
-    // genAsteroids();
+    genAsteroids();
   }
 });
 
@@ -753,24 +820,25 @@ function endGame() {
   gameOver = true;
   backmusic.end()
   playTune(dundundun)
-  addText("Game Over", { x: 10, y: 10, color: color`3` })
+  addText("Game Over", { x: 5, y: 5, color: color`3` })
+  
+  setTimeout(addText("Press k to return", { x: 2, y: 15, color: color`F`}), 2000000)
 }
 
 function compareShip(ast) {
   return (ast.x == getFirst(first).x && ast.y == getFirst(first).y) ||
          (ast.x == getFirst(second).x && ast.y == getFirst(second).y) ||
          (ast.x == getFirst(third).x && ast.y == getFirst(third).y) ||
-         (ast.x == getFirst(fourth).x && ast.y == getFirst(fourth).y);
+         (ast.x == getFirst(fourth).x && ast.y == getFirst(fourth).y); 
 }
 
 function compareLaser(ast) {
-  getAll(laserU).forEach(laser => { 
-    if (ast.type == asteroidD) { console.log(laser.y); console.log(ast.y); }
-                                   if (ast.x == laser.x && ast.y == laser.y) { return true; }});
-  getAll(laserD).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { return true; }});
-  getAll(laserL).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { return true; }});
-  getAll(laserR).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { return true; }});
-  return false;
+  let collided = false
+  getAll(laserU).forEach(laser => { if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  getAll(laserD).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  getAll(laserL).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  getAll(laserR).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  return collided;
 }
 
 function checkForCollision() {
@@ -781,7 +849,7 @@ function checkForCollision() {
     getAll(asteroidR).forEach(ast => { if (compareShip(ast)) { endGame() }})
 
     getAll(asteroidU).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 } })
-    getAll(asteroidD).forEach(ast => { if (compareLaser(ast)) { console.log("Yay!"); ast.remove(); score += 25 }})
+    getAll(asteroidD).forEach(ast => { console.log(compareLaser(ast)); if (compareLaser(ast)) { console.log("Yay!"); ast.remove(); score += 25 }})
     getAll(asteroidL).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
     getAll(asteroidR).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
   } else if (level == 3) {
@@ -833,7 +901,7 @@ function gameLoop() {
     checkForCollision()
     moveAsteroids()
     checkForCollision()
-    addText(`Score: ${score}`, { x: 0, y: 0, color: color `L`})
+    addText(`Score: ${score}`, { x: 0, y: 0, color: color `1`})
     
     setTimeout(gameLoop, 100)
   }
@@ -842,8 +910,8 @@ function gameLoop() {
 function genAsteroids() {
   if (!gameOver) {
     switch (Math.floor(Math.random() * 4)) {
-      case 0:   addSprite(Math.floor(Math.random() * width()), 0, asteroidU); break;
-      case 1:   addSprite(Math.floor(Math.random() * width()), 25, asteroidD); break;
+      case 0:   addSprite(Math.floor(Math.random() * width()), 0, asteroidD); break;
+      case 1:   addSprite(Math.floor(Math.random() * width()), 25, asteroidU); break;
       case 2:   addSprite(0, Math.floor(Math.random() * height()), asteroidL); break;
       case 3:   addSprite(31, Math.floor(Math.random() * height()), asteroidR); break;
     }
@@ -856,6 +924,7 @@ function start() {
   addText("Galaxy Dodger", { x: 3, y: 3, color: color`5`})
   addText("Press k to start", { x: 2, y: 10, color: color`4`})
   addText("j for classic mode", { x: 1, y: 12, color: color`D`})
+  addText("or i for controls", { x: 2, y: 14, color: color `7`})
 }
 
 start()

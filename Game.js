@@ -34,6 +34,11 @@ const laserL = "3"
 const laserR = "4"
 const laserD = "5"
 
+const laserNW = "6"
+const laserNE = "7"
+const laserSW = "8"
+const laserSE = "9"
+
 const selector = "s"
 
 const background = "b"
@@ -65,7 +70,17 @@ const noise = tune `
 164.83516483516485: G4~164.83516483516485,
 164.83516483516485: E4~164.83516483516485,
 659.3406593406594`
-
+const newNoise = tune `
+1000,
+500: D5-500 + B4/500,
+500,
+500: G4/500 + B4-500,
+500,
+500: A4/500 + C5-500,
+500,
+500: D4/500 + F4-500,
+500: C4/500,
+11000`
 const dundundun = tune `
 92.3076923076923: A4^92.3076923076923 + G4^92.3076923076923,
 92.3076923076923: G4^92.3076923076923 + F4^92.3076923076923,
@@ -496,6 +511,74 @@ CCCCCCCCCCCCCCCC
 .......33.......
 .......33.......
 .......33.......`],
+  [ laserNW, bitmap `
+33..............
+333.............
+.333............
+..333...........
+...333..........
+....333.........
+.....333........
+......333.......
+.......333......
+........333.....
+.........333....
+..........333...
+...........333..
+............333.
+.............333
+..............33`],
+  [ laserNE, bitmap `
+..............33
+.............333
+............333.
+...........333..
+..........333...
+.........333....
+........333.....
+.......333......
+......333.......
+.....333........
+....333.........
+...333..........
+..333...........
+.333............
+333.............
+33..............`],
+  [ laserSW, bitmap `
+..............33
+.............333
+............333.
+...........333..
+..........333...
+.........333....
+........333.....
+.......333......
+......333.......
+.....333........
+....333.........
+...333..........
+..333...........
+.333............
+333.............
+33..............`],
+  [ laserSE, bitmap `
+33..............
+333.............
+.333............
+..333...........
+...333..........
+....333.........
+.....333........
+......333.......
+.......333......
+........333.....
+.........333....
+..........333...
+...........333..
+............333.
+.............333
+..............33`],
   [ background, bitmap`
 0000000000000000
 0000000000000000
@@ -518,31 +601,31 @@ CCCCCCCCCCCCCCCC
 let level = 0
 const levels = [
   map `
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................
-...............................`,
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`,
   map`
 ...........
 ...........
@@ -607,7 +690,32 @@ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`,
+  map `bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`
 ]
 
 // set the map displayed to the current level
@@ -615,6 +723,7 @@ setMap(levels[level]);
 
 let score = 0
 let gameOver = false
+let change = 1
 
 let first;
 let second;
@@ -644,9 +753,8 @@ function spawnSpaceship() {
 onInput("w", () => {
   if (level == 1) {
     if (getFirst(selector).y == 5) getFirst(selector).y -= 2;
-  }
-  else if (level == 2 && !gameOver && (components.includes(engineU) || components.includes(engineMiniU))) {
-    components.forEach(c => { getFirst(c).y -= 1 });
+  } else if (level == 2 && !gameOver && (components.includes(engineU) || components.includes(engineMiniU))) {
+    components.forEach(c => { getFirst(c).y -= change });
   }
   else if (level == 3 && !gameOver) { getFirst(player).y -= 1; }
 });
@@ -655,7 +763,7 @@ onInput("a", () => {
   if (level == 1) {
     if (getFirst(selector).x != 1) getFirst(selector).x -= 2;
   } else if (level == 2 && !gameOver && (components.includes(engineL) || components.includes(engineMiniL))) {
-    components.forEach(c => { getFirst(c).x -= 1 });
+    components.forEach(c => { getFirst(c).x -= change });
   }
   else if (level == 3 && !gameOver) { getFirst(player).x -= 1; }
 });
@@ -664,7 +772,7 @@ onInput("s", () => {
   if (level == 1) {
     if (getFirst(selector).y == 3) getFirst(selector).y += 2;
   } else if (level == 2 && !gameOver && (components.includes(engineD) || components.includes(engineMiniD))) {
-    components.forEach(c => { getFirst(c).y += 1 });
+    components.forEach(c => { getFirst(c).y += change });
   }
   else if (level == 3 && !gameOver) { getFirst(player).y += 1; }
 });
@@ -673,7 +781,7 @@ onInput("d", () => {
   if (level == 1) {
     if (getFirst(selector).x != 10) getFirst(selector).x += 2;
   } else if (level == 2 && !gameOver && (components.includes(engineR) || components.includes(engineMiniR))) {
-    components.forEach(c => { getFirst(c).x += 1 });
+    components.forEach(c => { getFirst(c).x += change });
   }
   else if (level == 3 && !gameOver) { getFirst(player).x += 1; }
 });
@@ -682,15 +790,27 @@ onInput("k", () => {
   if (level == 0) { level = 1; setMap(levels[level]); clearText(); initialize(); } 
   else if (level == 2 || level == 3) {
     if (!gameOver) {
-      if (components.includes(cannonU) && getAll(laserU).length < 3) { laserQueue.push(laserU) }
-      if (components.includes(cannonD) && getAll(laserD).length < 3) { laserQueue.push(laserD) }
-      if (components.includes(cannonL) && getAll(laserL).length < 3) { laserQueue.push(laserL) }
-      if (components.includes(cannonR) && getAll(laserR).length < 3) { laserQueue.push(laserR) }
+      if (components.includes(cannonU) && getAll(laserU).length < 3) { 
+        laserQueue.push(laserU) 
+        if (components.includes(cannonBooster)) { laserQueue.push(laserNW); laserQueue.push(laserNE); }
+      }
+      if (components.includes(cannonD) && getAll(laserD).length < 3) { 
+        laserQueue.push(laserD) 
+        if (components.includes(cannonBooster)) { laserQueue.push(laserSW); laserQueue.push(laserSE); }
+      }
+      if (components.includes(cannonL) && getAll(laserL).length < 3) { 
+        laserQueue.push(laserL) 
+        if (components.includes(cannonBooster)) { laserQueue.push(laserNW); laserQueue.push(laserSW); }
+      }
+      if (components.includes(cannonR) && getAll(laserR).length < 3) { 
+        laserQueue.push(laserR) 
+        if (components.includes(cannonBooster)) { laserQueue.push(laserNE); laserQueue.push(laserSE); }
+      }
     } else { 
       level = 0; 
       setMap(levels[level]); 
       clearText(); 
-      playTune(noise); 
+      backmusic = playTune(noise, Infinity); 
       gameOver = false; 
       first = undefined; second = undefined; third = undefined; fourth = undefined; components = [];
       start(); }
@@ -740,33 +860,63 @@ onInput("j", () => {
 onInput("l", () => {
   if (level == 1) { 
     let select = getFirst(selector)
-    let type = getTile(select.x, select.y)[0].type
-    getAll(type).forEach(t => { t.remove() })
-    
-    if (first == undefined) {
-      addSprite(5, 7, type)
-      first = type
-    } else if (second == undefined) {
-      addSprite(6, 7, type)
-      second = type
-    } else if (third == undefined) {
-      addSprite(5, 8, type)
-      third = type
-    } else if (fourth == undefined) {
-      addSprite(6, 8, type)
-      fourth = type
+    if (getTile(select.x, select.y).length == 2) {
+      let type = getTile(select.x, select.y)[0].type
+      getAll(type).forEach(t => { t.remove() })
+      
+      if (first == undefined) {
+        addSprite(5, 7, type)
+        first = type
+      } else if (second == undefined) {
+        addSprite(6, 7, type)
+        second = type
+      } else if (third == undefined) {
+        addSprite(5, 8, type)
+        third = type
+      } else if (fourth == undefined) {
+        addSprite(6, 8, type)
+        fourth = type
+      }
     }
   }
 });
 
-onInput("i", () => {})
+onInput("i", () => {
+  if (level == 0) {
+    level = 4;
+    setMap(levels[level])
+    clearText();
+
+    addText("When building:", { x: 1, y: 2, color: color `4` })
+    addText("WASD to move", { x: 3, y: 3, color: color `8` })
+    addText("l to choose item", { x: 3, y: 4, color: color `9` })
+    
+    addText("When flying:", { x: 1, y: 6, color: color `7` })
+    addText("WASD to move", { x: 3, y: 7, color: color `3` })
+    addText("k to Fire Lasers", { x: 3, y: 8, color: color `H` })
+    addText("with cannon", { x: 4, y: 9, color: color `H` })
+    addText("j to Rotate", { x: 3, y: 10, color: color `C` })
+    addText("with mini engine", { x: 4, y: 11, color: color `C` })
+
+    addText("Press i to return", { x: 2, y: 14, color: color `2`})
+  } else if (level == 4) {
+    level = 0;
+    setMap(levels[level])
+    clearText();
+    start();
+  }
+})
 
 // these get run after every input
 afterInput(() => {
   if (level == 1 && first != undefined && second != undefined && third != undefined && fourth != undefined) {
-    components = [first, second, third, fourth]
+    components = [first, second, third, fourth];
     level++;
     clearText();
+    score = 0;
+
+    if (components.includes(engineBooster)) { change = 3 }
+    
     setMap(levels[level]);
     spawnSpaceship();
     gameLoop();
@@ -817,6 +967,7 @@ function moveAsteroids() {
 }
 
 function endGame() {
+  change = 1
   gameOver = true;
   backmusic.end()
   playTune(dundundun)
@@ -835,9 +986,9 @@ function compareShip(ast) {
 function compareLaser(ast) {
   let collided = false
   getAll(laserU).forEach(laser => { if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
-  getAll(laserD).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
-  getAll(laserL).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
-  getAll(laserR).forEach(laser => { console.log(laser); if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  getAll(laserD).forEach(laser => { if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  getAll(laserL).forEach(laser => { if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
+  getAll(laserR).forEach(laser => { if (ast.x == laser.x && ast.y == laser.y) { collided = true; }});
   return collided;
 }
 
@@ -849,7 +1000,7 @@ function checkForCollision() {
     getAll(asteroidR).forEach(ast => { if (compareShip(ast)) { endGame() }})
 
     getAll(asteroidU).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 } })
-    getAll(asteroidD).forEach(ast => { console.log(compareLaser(ast)); if (compareLaser(ast)) { console.log("Yay!"); ast.remove(); score += 25 }})
+    getAll(asteroidD).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
     getAll(asteroidL).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
     getAll(asteroidR).forEach(ast => { if (compareLaser(ast)) { ast.remove(); score += 25 }})
   } else if (level == 3) {
@@ -867,6 +1018,18 @@ function genLasers() {
     if (laser == laserD && getFirst(cannonD)) { addSprite(getFirst(cannonD).x, getFirst(cannonD).y, laser) }
     if (laser == laserL && getFirst(cannonL)) { addSprite(getFirst(cannonL).x, getFirst(cannonL).y, laser) }
     if (laser == laserR && getFirst(cannonR)) { addSprite(getFirst(cannonR).x, getFirst(cannonR).y, laser) }
+    if (laser == laserNW) { 
+      let location = getFirst(cannonU) ? getFirst(cannonU) : getFirst(cannonL)
+      addSprite(location.x, location.y, laser) }
+    if (laser == laserNE) { 
+      let location = getFirst(cannonU) ? getFirst(cannonU) : getFirst(cannonR)
+      addSprite(location.x, location.y, laser) }
+    if (laser == laserSW) { 
+      let location = getFirst(cannonD) ? getFirst(cannonD) : getFirst(cannonL)
+      addSprite(location.x, location.y, laser) }
+    if (laser == laserSE) { 
+      let location = getFirst(cannonD) ? getFirst(cannonD) : getFirst(cannonR)
+      addSprite(location.x, location.y, laser) }
   })
 
   laserQueue = []
@@ -891,6 +1054,26 @@ function moveLasers() {
   getAll(laserR).forEach(l => { 
     if (l.x == width() - 1) { l.remove(); }
     l.x += 1; 
+  });
+
+  getAll(laserNW).forEach(l => {
+    if (l.x == 0 || l.y == 0) { l.remove(); }
+    l.x -= 1; l.y -= 1; 
+  });
+
+  getAll(laserNE).forEach(l => {
+    if (l.x == width() -1 || l.y == 0) { l.remove(); }
+    l.x += 1; l.y -= 1; 
+  });
+
+  getAll(laserSW).forEach(l => {
+    if (l.x == 0 || l.y == height() - 1) { l.remove(); }
+    l.x -= 1; l.y += 1; 
+  });
+
+  getAll(laserSE).forEach(l => {
+    if (l.x == width() - 1 || l.y == height() - 1) { l.remove(); }
+    l.x += 1; l.y += 1; 
   });
 }
 
@@ -921,6 +1104,7 @@ function genAsteroids() {
 }
 
 function start() {
+  score = 0
   addText("Galaxy Dodger", { x: 3, y: 3, color: color`5`})
   addText("Press k to start", { x: 2, y: 10, color: color`4`})
   addText("j for classic mode", { x: 1, y: 12, color: color`D`})
